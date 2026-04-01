@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fragrance Lab">
+<meta name="theme-color" content="#0D0B09">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Fragrance Lab</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚗</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230D0B09'/><text x='50' y='68' font-size='56' text-anchor='middle'>⚗</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+--bg:#0D0B09;--surface:#1A1714;--surface-h:#241F1A;
+--border:#2E2720;--border-l:#3D3428;
+--gold:#D4A574;--gold-d:#A07B52;--gold-b:#E8C99B;
+--cream:#F0E6D8;--cream-d:#B8A898;--cream-f:#7A6E62;
+--danger:#C45B4A;--danger-d:#8B3D30;--success:#6B8F5E;
+--top:#E8B86D;--mid:#C47D5A;--base:#8B5E3C;
+--font:'Cormorant Garamond',serif;--body:'DM Sans',sans-serif;
+}
+html,body{background:var(--bg);color:var(--cream);font-family:var(--body);font-size:14px;
+  overscroll-behavior:none;min-height:100vh;min-height:100dvh}
+body{max-width:600px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom)}
+input,select,textarea,button{font-family:inherit;font-size:inherit;color:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold-d)!important}
+.header{padding:20px 20px 12px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%);
+  position:sticky;top:0;z-index:100;padding-top:max(20px,env(safe-area-inset-top))}
+.header h1{font-family:var(--font);font-size:22px;font-weight:300;color:var(--gold-b);letter-spacing:2px;cursor:pointer}
+.btn{background:none;border:1px solid var(--border);color:var(--cream);padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13px;transition:all .2s}
+.btn:active{opacity:.7}
+.btn-gold{background:var(--gold);border:none;color:var(--bg);padding:8px 18px;border-radius:4px;cursor:pointer;font-size:13px;font-weight:600;letter-spacing:.5px}
+.btn-gold:active{opacity:.8}
+.btn-gold:disabled{opacity:.4}
+.btn-danger{background:none;border:1px solid var(--danger-d);color:var(--danger);padding:6px 14px;border-radius:4px;cursor:pointer;font-size:12px}
+.input{background:var(--surface);border:1px solid var(--border);color:var(--cream);padding:8px 12px;border-radius:4px;width:100%}
+.select{background:var(--surface);border:1px solid var(--border);color:var(--cream);padding:8px 10px;border-radius:4px;font-size:13px;cursor:pointer;-webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237A6E62'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.label{font-size:11px;color:var(--cream-d);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:12px}
+.tag{display:inline-block;background:var(--surface-h);border:1px solid var(--border);color:var(--cream-f);padding:2px 10px;border-radius:20px;font-size:11px;margin-right:6px;margin-bottom:4px}
+.tag-gold{border-color:var(--gold-d);color:var(--gold)}
+.content{padding:16px 16px 80px}
+.back-btn{border:none;padding:4px 0;color:var(--gold-d);margin-bottom:12px;font-size:13px}
+.note-bar{height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
+.note-bar-fill{height:100%;border-radius:2px;transition:width .4s ease}
+.ing-row{border-left:3px solid;padding:10px;margin-bottom:8px;border-radius:6px;background:var(--surface);border-right:1px solid var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border)}
+.detail-row:nth-child(even){background:var(--bg)}
+.calc-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.calc-sheet{background:var(--surface);border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:85vh;overflow:auto;padding:24px 20px;
+  padding-bottom:max(24px,env(safe-area-inset-bottom));border:1px solid var(--border);border-bottom:none}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 20px;
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  background:var(--surface);border-top:1px solid var(--border);display:flex;gap:8px;justify-content:center;max-width:600px;margin:0 auto;z-index:50}
+.empty{text-align:center;padding:48px 20px}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.3}
+.pie-container{width:120px;height:120px;position:relative}
+.pie-container svg{transform:rotate(-90deg)}
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.suggest-wrap{position:relative}
+.suggest-list{position:absolute;top:100%;left:0;right:0;z-index:60;background:var(--surface);border:1px solid var(--gold-d);border-radius:0 0 6px 6px;max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.suggest-item{padding:8px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);font-size:13px}
+.suggest-item:last-child{border-bottom:none}
+.suggest-item:active{background:var(--surface-h)}
+.suggest-cat{font-size:10px;color:var(--cream-f);margin-left:4px}
+.suggest-note{font-size:10px;padding:1px 6px;border-radius:3px;margin-left:6px}
+.auto-badge{display:inline-block;font-size:9px;color:var(--success);border:1px solid var(--success);padding:0 5px;border-radius:3px;margin-left:6px}
+.folder-tab{padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--cream-d);white-space:nowrap;transition:all .2s}
+.folder-tab.active{background:var(--gold);color:var(--bg);border-color:var(--gold);font-weight:600}
+.reorder-btn{background:none;border:none;color:var(--cream-f);font-size:16px;padding:4px 6px;cursor:pointer;line-height:1}
+.reorder-btn:active{color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const DROPS_PER_ML=20;
+const NOTE_TYPES={top:{label:"トップ",color:"#E8B86D",icon:"◇"},middle:{label:"ミドル",color:"#C47D5A",icon:"◆"},base:{label:"ベース",color:"#8B5E3C",icon:"■"}};
+const CONCENTRATION_TYPES=[
+  {value:"parfum",label:"パルファム",range:"20-30%",ratio:0.25},
+  {value:"edp",label:"オードパルファム",range:"15-20%",ratio:0.175},
+  {value:"edt",label:"オードトワレ",range:"5-15%",ratio:0.10},
+  {value:"edc",label:"オーデコロン",range:"2-5%",ratio:0.035},
+];
+const CATEGORIES=["シトラス","フローラル","ウッディ","スパイス","ムスク","アンバー","グリーン","フルーティ","アクアティック","バルサミック","アロマティック","グルマン","レザー","アニマリック","その他"];
+
+const MATERIALS_DB=[
+["ベルガモット",["bergamot","ベルガモットFCF"],"top","シトラス"],["レモン",["lemon","レモンEO"],"top","シトラス"],["ライム",["lime"],"top","シトラス"],["グレープフルーツ",["grapefruit","GF"],"top","シトラス"],["オレンジスイート",["orange sweet","オレンジ","スイートオレンジ"],"top","シトラス"],["オレンジビター",["bitter orange"],"top","シトラス"],["マンダリン",["mandarin","マンダリンオレンジ"],"top","シトラス"],["タンジェリン",["tangerine"],"top","シトラス"],["ユズ",["yuzu","柚子"],"top","シトラス"],["レモングラス",["lemongrass"],"top","シトラス"],["シトロネラ",["citronella"],"top","シトラス"],["プチグレン",["petitgrain"],"top","シトラス"],["リツェアクベバ",["litsea cubeba","メイチャン","リトセア"],"top","シトラス"],["シトラール",["citral"],"top","シトラス"],["リモネン",["limonene","d-limonene"],"top","シトラス"],["リナリルアセテート",["linalyl acetate"],"top","シトラス"],
+["ローズ",["rose","ローズオットー","ローズEO"],"middle","フローラル"],["ローズAbs.",["rose abs","rose absolute","ローズアブソリュート","ローズabs"],"middle","フローラル"],["ジャスミン",["jasmine","ジャスミンAbs.","ジャスミンabs"],"middle","フローラル"],["ジャスミンサンバック",["jasmine sambac","サンバック"],"middle","フローラル"],["イランイラン",["ylang ylang","イランイランEO"],"middle","フローラル"],["ネロリ",["neroli"],"top","フローラル"],["ラベンダー",["lavender","ラベンダーEO","真正ラベンダー"],"top","フローラル"],["ゼラニウム",["geranium","ローズゼラニウム"],"middle","フローラル"],["パルマローザ",["palmarosa"],"middle","フローラル"],["カモミールローマン",["chamomile roman","ローマンカモミール","カモミール"],"middle","フローラル"],["チュベローズ",["tuberose","チューベローズ"],"middle","フローラル"],["オスマンサス",["osmanthus","金木犀","キンモクセイ"],"middle","フローラル"],["バイオレット",["violet","スミレ"],"middle","フローラル"],["ミモザ",["mimosa","ミモザAbs."],"middle","フローラル"],["マグノリア",["magnolia","モクレン"],"middle","フローラル"],["ロータス",["lotus","蓮"],"middle","フローラル"],["フランジパニ",["frangipani","プルメリア"],"middle","フローラル"],["リンデンブロッサム",["linden blossom","菩提樹"],"middle","フローラル"],["リナロール",["linalool"],"middle","フローラル"],["ゲラニオール",["geraniol"],"middle","フローラル"],["シトロネロール",["citronellol"],"middle","フローラル"],["フェニルエチルアルコール",["PEA","phenylethyl alcohol","フェニルエタノール"],"middle","フローラル"],["ヘディオン",["hedione","メチルジヒドロジャスモネート"],"middle","フローラル"],["リリアール",["lilial"],"middle","フローラル"],["ヒドロキシシトロネラール",["hydroxycitronellal"],"middle","フローラル"],
+["サンダルウッド",["sandalwood","白檀","ビャクダン"],"base","ウッディ"],["シダーウッド",["cedarwood","シダー","シダーウッドアトラス","シダーウッドバージニア"],"base","ウッディ"],["ヒノキ",["hinoki","檜","ヒノキEO"],"middle","ウッディ"],["ヒバ",["hiba","ヒバEO"],"middle","ウッディ"],["パチュリ",["patchouli","パチュリEO"],"base","ウッディ"],["ベチバー",["vetiver","ベチベル"],"base","ウッディ"],["ガイアックウッド",["guaiacwood","グアヤクウッド"],"base","ウッディ"],["ローズウッド",["rosewood"],"middle","ウッディ"],["サイプレス",["cypress","イトスギ"],"middle","ウッディ"],["ジュニパーベリー",["juniper berry","ジュニパー"],"top","ウッディ"],["パイン",["pine","マツ","松"],"middle","ウッディ"],["フランキンセンス",["frankincense","乳香","オリバナム"],"base","ウッディ"],["エレミ",["elemi"],"middle","ウッディ"],["ホーウッド",["ho wood","ホーリーフ"],"middle","ウッディ"],["イソイースーパー",["iso e super","イソEスーパー"],"base","ウッディ"],["サンタロール",["santalol"],"base","ウッディ"],
+["シナモン",["cinnamon","シナモンバーク","桂皮"],"middle","スパイス"],["クローブ",["clove","丁子","チョウジ"],"middle","スパイス"],["カルダモン",["cardamom"],"top","スパイス"],["ブラックペッパー",["black pepper","ペッパー","黒胡椒","コショウ"],"top","スパイス"],["ピンクペッパー",["pink pepper"],"top","スパイス"],["ジンジャー",["ginger","生姜","ショウガ"],"top","スパイス"],["ナツメグ",["nutmeg","ニクズク"],"middle","スパイス"],["スターアニス",["star anise","八角","アニス"],"middle","スパイス"],["コリアンダー",["coriander"],"top","スパイス"],["クミン",["cumin"],"middle","スパイス"],["サフラン",["saffron"],"middle","スパイス"],["オイゲノール",["eugenol"],"middle","スパイス"],
+["ホワイトムスク",["white musk"],"base","ムスク"],["ムスクケトン",["musk ketone"],"base","ムスク"],["ガラクソリド",["galaxolide"],"base","ムスク"],["エチレンブラシレート",["ethylene brassylate"],"base","ムスク"],["アンブレットシード",["ambrette seed","アンブレットEO"],"base","ムスク"],["ムスコン",["muscone"],"base","ムスク"],["ハバノライド",["habanolide"],"base","ムスク"],["トナリド",["tonalid"],"base","ムスク"],
+["アンバーグリス",["ambergris","龍涎香","アンバー"],"base","アンバー"],["ラブダナム",["labdanum","ラブダナムAbs."],"base","アンバー"],["スチラックス",["styrax"],"base","アンバー"],["アンブロキサン",["ambroxan","アンブロックス"],"base","アンバー"],
+["ガルバナム",["galbanum"],"top","グリーン"],["バイオレットリーフ",["violet leaf","スミレ葉"],"top","グリーン"],["ティーツリー",["tea tree"],"top","グリーン"],["クラリセージ",["clary sage"],"middle","グリーン"],["ヘイ",["hay","干草"],"middle","グリーン"],["緑茶",["green tea","グリーンティー"],"top","グリーン"],["シス-3-ヘキセノール",["cis-3-hexenol","リーフアルコール"],"top","グリーン"],
+["ピーチ",["peach","桃","モモ"],"middle","フルーティ"],["アップル",["apple","リンゴ","林檎"],"top","フルーティ"],["ペア",["pear","洋梨","ラフランス"],"top","フルーティ"],["カシス",["cassis","黒すぐり","ブラックカラント"],"top","フルーティ"],["ラズベリー",["raspberry","フランボワーズ"],"middle","フルーティ"],["ストロベリー",["strawberry","苺","イチゴ"],"top","フルーティ"],["ライチ",["lychee","ライチー"],"top","フルーティ"],["ガンマデカラクトン",["gamma decalactone","γ-デカラクトン"],"middle","フルーティ"],
+["カロン",["calone","マリンノート"],"top","アクアティック"],["ジヒドロミルセノール",["dihydromyrcenol"],"top","アクアティック"],
+["ベンゾイン",["benzoin","安息香"],"base","バルサミック"],["トルーバルサム",["tolu balsam"],"base","バルサミック"],["ペルーバルサム",["peru balsam"],"base","バルサミック"],["ミルラ",["myrrh","没薬"],"base","バルサミック"],["ベンジルベンゾエート",["benzyl benzoate"],"base","バルサミック"],
+["ローズマリー",["rosemary"],"top","アロマティック"],["タイム",["thyme"],"top","アロマティック"],["セージ",["sage"],"top","アロマティック"],["バジル",["basil"],"top","アロマティック"],["ペパーミント",["peppermint","ミント"],"top","アロマティック"],["スペアミント",["spearmint"],"top","アロマティック"],["ユーカリ",["eucalyptus","ユーカリプタス"],"top","アロマティック"],["マジョラム",["marjoram"],"middle","アロマティック"],
+["バニラ",["vanilla","バニラAbs."],"base","グルマン"],["バニリン",["vanillin"],"base","グルマン"],["エチルバニリン",["ethyl vanillin"],"base","グルマン"],["トンカビーン",["tonka bean","トンカ","トンカビーンAbs."],"base","グルマン"],["クマリン",["coumarin"],"base","グルマン"],["チョコレート",["chocolate","カカオ","ココア"],"base","グルマン"],["コーヒー",["coffee","珈琲"],"middle","グルマン"],["ハニー",["honey","蜂蜜","はちみつ"],"middle","グルマン"],
+["バーチタール",["birch tar"],"base","レザー"],["イソブチルキノリン",["isobutyl quinoline","IBQ"],"base","レザー"],["スエード",["suede","スウェード"],"base","レザー"],["カストリウム",["castoreum"],"base","レザー"],
+["シベット",["civet","ジャコウネコ"],"base","アニマリック"],["インドール",["indole"],"middle","アニマリック"],["スカトール",["skatole"],"base","アニマリック"],
+];
+
+const _matIdx=[];
+MATERIALS_DB.forEach(([name,aliases,note,cat])=>{const all=[name,...aliases];const norm=all.map(a=>a.toLowerCase().replace(/[\s.\-_　]/g,""));_matIdx.push({name,aliases:all,normalized:norm,note,cat});});
+
+function lookupMaterial(input){
+  if(!input||input.length<1)return null;
+  const q=input.toLowerCase().replace(/[\s.\-_　]/g,"");
+  for(const m of _matIdx){if(m.normalized.includes(q))return{name:m.name,note:m.note,cat:m.cat,exact:true};}
+  const c=[];for(const m of _matIdx){for(const n of m.normalized){if(n.includes(q)||q.includes(n)){c.push({name:m.name,note:m.note,cat:m.cat,score:Math.abs(n.length-q.length)});break;}}}
+  if(c.length>0){c.sort((a,b)=>a.score-b.score);return{...c[0],exact:false};}
+  return null;
+}
+
+function suggestMaterials(input,limit=5){
+  if(!input||input.length<1)return[];
+  const q=input.toLowerCase().replace(/[\s.\-_　]/g,"");
+  const r=[];const seen=new Set();
+  for(const m of _matIdx){for(const n of m.normalized){if(n.includes(q)&&!seen.has(m.name)){r.push({name:m.name,note:m.note,cat:m.cat,score:n.indexOf(q)*100+n.length});seen.add(m.name);break;}}}
+  r.sort((a,b)=>a.score-b.score);return r.slice(0,limit);
+}
+
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function newIng(){return{id:uid(),name:"",drops:1,noteType:"top",category:"その他"};}
+function newRecipe(){return{id:uid(),name:"",description:"",concentration:"edt",baseMl:10,ingredients:[newIng()],memo:"",tags:[],project:"",createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),maturationStart:null,sortOrder:Date.now()};}
+
+function loadR(){try{return JSON.parse(localStorage.getItem("fragrance-recipes-v2")||"[]");}catch{return[];}}
+function saveR(r){try{localStorage.setItem("fragrance-recipes-v2",JSON.stringify(r));}catch{}}
+function loadP(){try{return JSON.parse(localStorage.getItem("fragrance-projects")||'[""]');}catch{return[""];}}
+function saveP(p){try{localStorage.setItem("fragrance-projects",JSON.stringify(p));}catch{}}
+
+function el(tag,attrs,...ch){const e=document.createElement(tag);if(attrs)Object.entries(attrs).forEach(([k,v])=>{if(k==="style"&&typeof v==="object")Object.assign(e.style,v);else if(k.startsWith("on"))e.addEventListener(k.slice(2).toLowerCase(),v);else if(k==="className")e.className=v;else if(k==="value")e.value=v;else if(k==="disabled"){if(v)e.setAttribute("disabled","");}else if(k==="selected"){if(v)e.setAttribute("selected","");}else if(k==="placeholder")e.placeholder=v;else if(k==="type")e.type=v;else if(k==="min")e.min=v;else if(k==="step")e.step=v;else if(k==="rows")e.rows=v;else e.setAttribute(k,v);});ch.flat(Infinity).forEach(c=>{if(c==null||c===false)return;e.appendChild(typeof c==="string"||typeof c==="number"?document.createTextNode(c):c);});return e;}
+
+function makePie(data,size=120,inner=30,outer=52){const cx=size/2,cy=size/2,total=data.reduce((s,d)=>s+d.value,0);if(total===0)return el("div");const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("width",size);svg.setAttribute("height",size);svg.setAttribute("viewBox",`0 0 ${size} ${size}`);let sa=0;data.forEach(d=>{if(d.value===0)return;const a=(d.value/total)*Math.PI*2,ea=sa+a,la=a>Math.PI?1:0;const p=document.createElementNS("http://www.w3.org/2000/svg","path");const c=Math.cos,s=Math.sin,hp=Math.PI/2;p.setAttribute("d",`M${cx+outer*c(sa-hp)},${cy+outer*s(sa-hp)} A${outer},${outer} 0 ${la} 1 ${cx+outer*c(ea-hp)},${cy+outer*s(ea-hp)} L${cx+inner*c(ea-hp)},${cy+inner*s(ea-hp)} A${inner},${inner} 0 ${la} 0 ${cx+inner*c(sa-hp)},${cy+inner*s(sa-hp)} Z`);p.setAttribute("fill",d.color);svg.appendChild(p);sa=ea;});return svg;}
+
+// ─── App State ───
+const S={
+  recipes:loadR(),projects:loadP(),
+  view:"list",curId:null,editData:null,
+  showCalc:false,showImport:false,
+  search:"",tagInput:"",
+  importText:"",importPreview:[],importError:"",
+  activeFolder:"__all__",
+};
+S.recipes.forEach((r,i)=>{if(!r.project)r.project="";if(!r.sortOrder)r.sortOrder=Date.now()-i;});
+if(!S.projects.includes(""))S.projects.unshift("");
+
+function cur(){return S.recipes.find(r=>r.id===S.curId);}
+function persist(){saveR(S.recipes);saveP(S.projects);}
+
+function noteBalance(ings){
+  const t={top:0,middle:0,base:0};ings.forEach(i=>{if(i.name)t[i.noteType]=(t[i.noteType]||0)+i.drops;});const tot=t.top+t.middle+t.base;
+  if(tot===0)return el("div",{className:"card",style:{textAlign:"center",color:"#7A6E62",fontSize:"13px",padding:"20px"}},"素材を追加するとノートバランスが表示されます");
+  const data=Object.entries(NOTE_TYPES).map(([k,v])=>({name:v.label,value:t[k],color:v.color})).filter(d=>d.value>0);
+  const bars=Object.entries(NOTE_TYPES).map(([k,v])=>{const p=tot>0?(t[k]/tot)*100:0;return el("div",null,el("div",{style:{display:"flex",justifyContent:"space-between",fontSize:"12px",marginBottom:"3px"}},el("span",{style:{color:v.color}},v.icon+" "+v.label),el("span",{style:{color:"#B8A898"}},t[k]+"滴 ("+p.toFixed(0)+"%)")),el("div",{className:"note-bar"},el("div",{className:"note-bar-fill",style:{width:p+"%",background:v.color}})));});
+  return el("div",{className:"card"},el("span",{className:"label",style:{marginBottom:"12px"}},"ノートバランス"),el("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},el("div",{className:"pie-container"},makePie(data)),el("div",{style:{flex:"1",display:"flex",flexDirection:"column",gap:"8px"}},...bars)),el("div",{style:{marginTop:"12px",fontSize:"11px",color:"#7A6E62",textAlign:"center"}},"推奨比率 — トップ 30% / ミドル 45% / ベース 25%"));
+}
+
+function matBadge(s){if(!s)return null;const d=Math.floor((Date.now()-new Date(s).getTime())/86400000);const c=d<7?"#7A6E62":d<30?"#A07B52":"#6B8F5E";return el("span",{className:"tag",style:{borderColor:c,color:c}},"熟成 "+d+"日目");}
+
+// ─── LIST ───
+function renderList(){
+  const q=S.search.toLowerCase();
+  let list=S.recipes;
+  if(q)list=list.filter(r=>r.name.toLowerCase().includes(q)||r.description.toLowerCase().includes(q)||r.tags.some(t=>t.toLowerCase().includes(q))||r.ingredients.some(i=>i.name.toLowerCase().includes(q)));
+  if(S.activeFolder!=="__all__")list=list.filter(r=>(r.project||"")===S.activeFolder);
+  list.sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0));
+
+  const allProj=[...new Set(S.recipes.map(r=>r.project||""))];
+  allProj.sort((a,b)=>S.projects.indexOf(a)-S.projects.indexOf(b));
+
+  const tabs=el("div",{style:{display:"flex",gap:"6px",marginBottom:"14px",overflowX:"auto",paddingBottom:"4px",scrollbarWidth:"none"}},
+    el("button",{className:"folder-tab"+(S.activeFolder==="__all__"?" active":""),onClick:()=>{S.activeFolder="__all__";render();}},"すべて"),
+    ...allProj.map(p=>el("button",{className:"folder-tab"+(S.activeFolder===p?" active":""),onClick:()=>{S.activeFolder=p;render();}},p||"未分類")),
+    el("button",{className:"folder-tab",style:{borderStyle:"dashed",color:"var(--cream-f)"},onClick:()=>{const n=prompt("新しいプロジェクト名:");if(n&&n.trim()&&!S.projects.includes(n.trim())){S.projects.push(n.trim());persist();render();}}},"+"));
+
+  const si=el("input",{className:"input",placeholder:"レシピ・素材を検索…",value:S.search,style:{marginBottom:"12px",background:"#0D0B09",borderColor:"#3D3428"},onInput:e=>{S.search=e.target.value;render();}});
+
+  const projMgmt=S.activeFolder!=="__all__"&&S.activeFolder!==""?el("div",{style:{display:"flex",gap:"6px",marginBottom:"12px"}},
+    el("button",{className:"btn",style:{fontSize:"11px",padding:"4px 10px"},onClick:()=>{const nn=prompt("プロジェクト名を変更:",S.activeFolder);if(nn&&nn.trim()&&nn.trim()!==S.activeFolder){const old=S.activeFolder;S.recipes.forEach(r=>{if(r.project===old)r.project=nn.trim();});const pi=S.projects.indexOf(old);if(pi>=0)S.projects[pi]=nn.trim();S.activeFolder=nn.trim();persist();render();}}},"✎ 名前変更"),
+    el("button",{className:"btn-danger",style:{fontSize:"11px",padding:"4px 10px"},onClick:()=>{if(!confirm("プロジェクト「"+S.activeFolder+"」を削除しますか？\nレシピは未分類に移動します。"))return;S.recipes.forEach(r=>{if(r.project===S.activeFolder)r.project="";});S.projects=S.projects.filter(p=>p!==S.activeFolder);S.activeFolder="__all__";persist();render();}},"削除")):null;
+
+  if(list.length===0)return el("div",{className:"content fade-in"},si,tabs,projMgmt,el("div",{className:"empty"},el("div",{className:"empty-icon"},"⚗"),el("div",{style:{color:"#7A6E62",fontSize:"14px"}},S.recipes.length===0?"レシピがありません":"該当するレシピがありません"),S.recipes.length===0?el("button",{className:"btn-gold",style:{marginTop:"16px"},onClick:openNew},"最初のレシピを作成"):null));
+
+  const cards=list.map(r=>{
+    const td=r.ingredients.reduce((s,i)=>s+(i.name?i.drops:0),0);const nc={top:0,middle:0,base:0};r.ingredients.forEach(i=>{if(i.name)nc[i.noteType]+=i.drops;});
+    const ct=CONCENTRATION_TYPES.find(c=>c.value===r.concentration);
+    const mb=Object.entries(NOTE_TYPES).map(([k,v])=>{const w=td>0?Math.max(4,(nc[k]/td)*60):0;return nc[k]>0?el("div",{style:{width:w+"px",height:"6px",background:v.color,borderRadius:"3px"}}):null;}).filter(Boolean);
+    return el("div",{className:"card",style:{display:"flex",gap:"8px",alignItems:"center"}},
+      el("div",{style:{display:"flex",flexDirection:"column",gap:"2px",flex:"0 0 auto"}},
+        el("button",{className:"reorder-btn",onClick:()=>moveR(r.id,list,-1)},"▲"),
+        el("button",{className:"reorder-btn",onClick:()=>moveR(r.id,list,1)},"▼")),
+      el("div",{style:{flex:"1",minWidth:"0",cursor:"pointer"},onClick:()=>{S.curId=r.id;S.view="detail";render();}},
+        el("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:"6px"}},
+          el("div",{style:{minWidth:0}},el("div",{style:{fontFamily:"var(--font)",fontSize:"17px",color:"var(--gold-b)",fontWeight:"500",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},r.name||"無題"),r.description?el("div",{style:{fontSize:"12px",color:"var(--cream-d)",marginTop:"2px"}},r.description):null),
+          el("span",{style:{fontSize:"11px",color:"var(--cream-f)",whiteSpace:"nowrap",marginLeft:"8px"}},ct?.label||"")),
+        el("div",{style:{display:"flex",gap:"12px",alignItems:"center",flexWrap:"wrap"}},el("div",{style:{display:"flex",gap:"2px"}},...mb),el("span",{style:{fontSize:"11px",color:"var(--cream-f)"}},td+"滴 / "+r.baseMl+"ml"),matBadge(r.maturationStart),r.project?el("span",{className:"tag tag-gold",style:{fontSize:"10px",padding:"1px 8px"}},r.project):null),
+        r.tags.length>0?el("div",{style:{marginTop:"6px"}},...r.tags.map(t=>el("span",{className:"tag"},t))):null));
+  });
+  return el("div",{className:"content fade-in"},si,tabs,projMgmt,...cards);
+}
+
+function moveR(id,vis,dir){const vi=vis.findIndex(r=>r.id===id);const ti=vi+dir;if(ti<0||ti>=vis.length)return;const tmp=vis[vi].sortOrder;vis[vi].sortOrder=vis[ti].sortOrder;vis[ti].sortOrder=tmp;persist();render();}
+
+// ─── DETAIL ───
+function renderDetail(){
+  const r=cur();if(!r)return el("div");
+  const td=r.ingredients.reduce((s,i)=>s+(i.name?i.drops:0),0);
+  const il=el("div",{className:"card",style:{padding:"0",overflow:"hidden"}},
+    el("div",{style:{padding:"10px 14px",background:"var(--bg)",borderBottom:"1px solid var(--border)"}},el("span",{className:"label"},"素材リスト")),
+    ...r.ingredients.filter(i=>i.name).map(ing=>{const nt=NOTE_TYPES[ing.noteType];return el("div",{className:"detail-row"},el("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},el("span",{style:{color:nt.color,fontSize:"10px"}},nt.icon),el("div",null,el("div",{style:{fontSize:"13px"}},ing.name),el("div",{style:{fontSize:"11px",color:"var(--cream-f)"}},nt.label+" · "+ing.category))),el("div",{style:{textAlign:"right"}},el("span",{style:{fontFamily:"var(--font)",fontSize:"16px",color:"var(--gold-b)"}},ing.drops),el("span",{style:{fontSize:"11px",color:"var(--cream-d)",marginLeft:"3px"}},"滴"),el("div",{style:{fontSize:"10px",color:"var(--cream-f)"}},td>0?((ing.drops/td)*100).toFixed(1)+"%":"")));}));
+  const ct=CONCENTRATION_TYPES.find(c=>c.value===r.concentration);
+  return el("div",{className:"content fade-in"},
+    el("button",{className:"btn back-btn",onClick:()=>{S.view="list";render();}},"← レシピ一覧"),
+    el("div",{style:{marginBottom:"20px"}},el("h2",{style:{fontFamily:"var(--font)",fontSize:"26px",fontWeight:"400",color:"var(--gold-b)",margin:"0 0 4px"}},r.name||"無題"),r.description?el("p",{style:{color:"var(--cream-d)",fontSize:"13px",margin:"4px 0"}},r.description):null,
+      el("div",{style:{display:"flex",gap:"8px",alignItems:"center",marginTop:"8px",flexWrap:"wrap"}},el("span",{className:"tag"},ct?.label||""),el("span",{className:"tag"},"基材 "+r.baseMl+"ml"),el("span",{className:"tag"},td+"滴 ≈ "+(td/DROPS_PER_ML).toFixed(1)+"ml"),matBadge(r.maturationStart),r.project?el("span",{className:"tag tag-gold"},r.project):null,...r.tags.map(t=>el("span",{className:"tag tag-gold"},t)))),
+    noteBalance(r.ingredients),il,
+    r.memo?el("div",{className:"card",style:{marginTop:"12px"}},el("div",{className:"label",style:{marginBottom:"6px"}},"メモ"),el("div",{style:{fontSize:"13px",lineHeight:"1.6",color:"var(--cream-d)",whiteSpace:"pre-wrap"}},r.memo)):null,
+    el("div",{style:{display:"flex",gap:"8px",marginTop:"16px",flexWrap:"wrap"}},
+      el("button",{className:"btn-gold",onClick:()=>{S.showCalc=true;render();}},"⚖ 計算"),
+      el("button",{className:"btn",onClick:()=>{S.editData=JSON.parse(JSON.stringify(r));S.view="edit";render();}},"✎ 編集"),
+      el("button",{className:"btn",onClick:()=>dupR(r)},"⧉ 複製"),
+      el("button",{className:"btn",onClick:()=>{const l=["素材名\t滴数\tノート\tカテゴリ"];r.ingredients.filter(i=>i.name).forEach(i=>l.push([i.name,i.drops,NOTE_TYPES[i.noteType].label,i.category].join("\t")));const t=l.join("\n");navigator.clipboard?navigator.clipboard.writeText(t).then(()=>alert("コピーしました")).catch(()=>pExp(t)):pExp(t);}},"📤 エクスポート"),
+      el("button",{className:"btn",onClick:()=>{const i=S.recipes.findIndex(x=>x.id===r.id);if(i>=0){S.recipes[i]={...S.recipes[i],maturationStart:S.recipes[i].maturationStart?null:new Date().toISOString()};persist();render();}}},(r.maturationStart?"⏹ 熟成リセット":"⏱ 熟成開始")),
+      el("button",{className:"btn-danger",onClick:()=>delR(r.id)},"削除")),
+    el("div",{style:{marginTop:"16px",fontSize:"10px",color:"var(--cream-f)",textAlign:"center"}},"作成: "+new Date(r.createdAt).toLocaleDateString("ja-JP")+" · 更新: "+new Date(r.updatedAt).toLocaleDateString("ja-JP")));
+}
+
+// ─── EDIT (IME-safe) ───
+function renderEdit(){
+  const d=S.editData;if(!d)return el("div");
+
+  function makeIngRow(ing){
+    const nt=NOTE_TYPES[ing.noteType];
+    // Create selects
+    const noteSel=el("select",{className:"select",style:{fontSize:"12px",padding:"4px 6px",width:"auto"},onChange:e=>{ing.noteType=e.target.value;row.style.borderLeftColor=NOTE_TYPES[e.target.value].color;}});
+    Object.entries(NOTE_TYPES).forEach(([k,v])=>{const o=el("option",{value:k},v.icon+" "+v.label);if(k===ing.noteType)o.selected=true;noteSel.appendChild(o);});
+    const catSel=el("select",{className:"select",style:{fontSize:"12px",padding:"4px 6px",flex:"1",minWidth:"80px"},onChange:e=>{ing.category=e.target.value;}});
+    CATEGORIES.forEach(c=>{const o=el("option",{value:c},c);if(c===ing.category)o.selected=true;catSel.appendChild(o);});
+
+    // Suggest dropdown (managed via direct DOM, never calls render())
+    const sugBox=el("div",{className:"suggest-list",style:{display:"none"}});
+    let composing=false;
+
+    function showSuggestions(val){
+      sugBox.innerHTML="";
+      if(!val||val.length<1){sugBox.style.display="none";return;}
+      const sgs=suggestMaterials(val,6);
+      if(!sgs.length){sugBox.style.display="none";return;}
+      sgs.forEach(s=>{const snt=NOTE_TYPES[s.note];
+        sugBox.appendChild(el("div",{className:"suggest-item",onMousedown:e=>{
+          e.preventDefault();nameIn.value=s.name;ing.name=s.name;ing.noteType=s.note;ing.category=s.cat;
+          noteSel.value=s.note;catSel.value=s.cat;row.style.borderLeftColor=NOTE_TYPES[s.note].color;
+          sugBox.style.display="none";updBadge(s.name);
+        }},el("span",null,s.name),el("div",{style:{display:"flex",alignItems:"center"}},el("span",{className:"suggest-note",style:{background:snt.color+"22",color:snt.color}},snt.label),el("span",{className:"suggest-cat"},s.cat))));
+      });
+      sugBox.style.display="block";
+    }
+
+    const badge=el("span",{className:"auto-badge",style:{display:"none"}},"自動");
+    function updBadge(v){const m=lookupMaterial(v);badge.style.display=(m&&m.exact)?"inline-block":"none";}
+    updBadge(ing.name);
+
+    function applyMatch(val){
+      const m=lookupMaterial(val);
+      if(m&&m.exact){ing.noteType=m.note;ing.category=m.cat;noteSel.value=m.note;catSel.value=m.cat;row.style.borderLeftColor=NOTE_TYPES[m.note].color;sugBox.style.display="none";}
+      else showSuggestions(val);
+      updBadge(val);
+    }
+
+    const nameIn=el("input",{className:"input",placeholder:"素材名（入力で自動判定）",value:ing.name,style:{fontSize:"13px",padding:"6px 10px",width:"100%"}});
+    nameIn.addEventListener("compositionstart",()=>{composing=true;});
+    nameIn.addEventListener("compositionend",e=>{composing=false;ing.name=e.target.value;applyMatch(ing.name);});
+    nameIn.addEventListener("input",e=>{if(composing)return;ing.name=e.target.value;applyMatch(ing.name);});
+    nameIn.addEventListener("focus",()=>{if(ing.name.length>=1)showSuggestions(ing.name);});
+    nameIn.addEventListener("blur",()=>{setTimeout(()=>{sugBox.style.display="none";},200);});
+
+    const nameWrap=el("div",{className:"suggest-wrap",style:{flex:"1"}},nameIn,sugBox);
+    const dropsIn=el("input",{type:"number",className:"input",value:ing.drops,min:"1",style:{width:"44px",textAlign:"center",padding:"4px 2px",fontSize:"14px",fontFamily:"var(--font)",fontWeight:"600"},onInput:e=>{ing.drops=Math.max(1,parseInt(e.target.value)||1);}});
+
+    const row=el("div",{className:"ing-row",style:{borderLeftColor:nt.color}},
+      el("div",{style:{display:"flex",gap:"6px",marginBottom:"6px",alignItems:"center"}},nameWrap,badge,
+        d.ingredients.length>1?el("button",{className:"btn",style:{padding:"4px 8px",fontSize:"14px",color:"var(--danger)",border:"none"},onClick:()=>{d.ingredients=d.ingredients.filter(i=>i.id!==ing.id);render();}},"×"):null),
+      el("div",{style:{display:"flex",gap:"6px",alignItems:"center",flexWrap:"wrap"}},noteSel,catSel,
+        el("div",{style:{display:"flex",alignItems:"center",gap:"4px",flex:"0 0 auto"}},
+          el("button",{className:"btn",style:{padding:"2px 8px",fontSize:"16px",lineHeight:"1"},onClick:()=>{ing.drops=Math.max(1,ing.drops-1);dropsIn.value=ing.drops;}},"−"),dropsIn,
+          el("button",{className:"btn",style:{padding:"2px 8px",fontSize:"16px",lineHeight:"1"},onClick:()=>{ing.drops++;dropsIn.value=ing.drops;}},"+"),
+          el("span",{style:{fontSize:"11px",color:"var(--cream-d)",marginLeft:"2px"}},"滴"))));
+    return row;
+  }
+
+  const projSel=el("select",{className:"select",style:{width:"100%"},onChange:e=>{if(e.target.value==="__new__"){const n=prompt("新しいプロジェクト名:");if(n&&n.trim()){if(!S.projects.includes(n.trim()))S.projects.push(n.trim());d.project=n.trim();persist();}e.target.value=d.project;render();}else d.project=e.target.value;}});
+  ["",...S.projects.filter(p=>p!=="")].forEach(p=>{const o=el("option",{value:p},p||"未分類");if(p===d.project)o.selected=true;projSel.appendChild(o);});
+  projSel.appendChild(el("option",{value:"__new__"},"+ 新規プロジェクト"));
+
+  const concSel=el("select",{className:"select",style:{width:"100%"},onChange:e=>{d.concentration=e.target.value;}});
+  CONCENTRATION_TYPES.forEach(c=>{const o=el("option",{value:c.value},c.label+" ("+c.range+")");if(c.value===d.concentration)o.selected=true;concSel.appendChild(o);});
+
+  const tagsArea=el("div",null,el("div",{style:{display:"flex",gap:"6px",marginBottom:"6px"}},el("input",{className:"input",placeholder:"タグを入力…",value:S.tagInput,style:{flex:"1"},onInput:e=>{S.tagInput=e.target.value;},onKeydown:e=>{if(e.key==="Enter"){addTag();render();}}}),el("button",{className:"btn",onClick:()=>{addTag();render();}},"追加")),el("div",null,...d.tags.map(t=>el("span",{className:"tag tag-gold",style:{cursor:"pointer"},onClick:()=>{d.tags=d.tags.filter(x=>x!==t);render();}},t+" ×"))));
+
+  return el("div",{className:"content fade-in"},
+    el("button",{className:"btn back-btn",onClick:()=>{S.view=S.recipes.find(r=>r.id===d.id)?"detail":"list";render();}},"← 戻る"),
+    el("div",{style:{marginBottom:"16px"}},el("div",{className:"label"},"レシピ名"),el("input",{className:"input",value:d.name,placeholder:"例: 吸血鬼の薔薇",style:{fontFamily:"var(--font)",fontSize:"20px",color:"var(--gold-b)",padding:"10px 12px"},onInput:e=>{d.name=e.target.value;}})),
+    el("div",{style:{marginBottom:"16px"}},el("div",{className:"label"},"説明"),el("input",{className:"input",value:d.description,placeholder:"コンセプトやイメージ…",onInput:e=>{d.description=e.target.value;}})),
+    el("div",{style:{display:"flex",gap:"12px",marginBottom:"16px"}},el("div",{style:{flex:"1"}},el("div",{className:"label"},"濃度"),concSel),el("div",{style:{flex:"0 0 80px"}},el("div",{className:"label"},"基材(ml)"),el("input",{type:"number",className:"input",value:d.baseMl,min:"0.5",step:"0.5",style:{textAlign:"center"},onInput:e=>{d.baseMl=Math.max(0.5,parseFloat(e.target.value)||0.5);}})),el("div",{style:{flex:"1"}},el("div",{className:"label"},"プロジェクト"),projSel)),
+    noteBalance(d.ingredients),
+    el("div",{style:{marginBottom:"16px"}},el("div",{className:"label",style:{marginBottom:"8px"}},"素材"),...d.ingredients.map(makeIngRow),
+      el("div",{style:{display:"flex",gap:"6px",marginTop:"4px"}},el("button",{className:"btn",style:{flex:"1",borderStyle:"dashed",color:"var(--cream-d)"},onClick:()=>{d.ingredients.push(newIng());render();}},"+ 素材を追加"),el("button",{className:"btn",style:{flex:"1",color:"var(--gold)",borderColor:"var(--gold-d)"},onClick:()=>{S.showImport=true;S.importText="";S.importPreview=[];S.importError="";render();}},"📋 一括入力"))),
+    el("div",{style:{marginBottom:"16px"}},el("div",{className:"label"},"タグ"),tagsArea),
+    el("div",{style:{marginBottom:"16px"}},el("div",{className:"label"},"メモ"),el("textarea",{className:"input",value:d.memo,placeholder:"調合の記録、気づき、改善案など…",rows:"4",style:{resize:"vertical",lineHeight:"1.6"},onInput:e=>{d.memo=e.target.value;}})),
+    el("div",{className:"bottom-bar"},el("button",{className:"btn",style:{flex:"1"},onClick:()=>{S.view=S.recipes.find(r=>r.id===d.id)?"detail":"list";render();}},"キャンセル"),el("button",{className:"btn-gold",disabled:!d.name.trim(),style:{flex:"2"},onClick:saveEdit},"保存")));
+}
+
+// ─── CALC ───
+function renderCalc(){const r=cur();if(!r||!S.showCalc)return null;const bm=r.baseMl||1;let tm=parseFloat(document.getElementById("ct")?.value)||r.baseMl;const ra=tm/bm;const tb=r.ingredients.reduce((s,i)=>s+(i.name?i.drops:0),0);const tt=Math.round(tb*ra);const ct=CONCENTRATION_TYPES.find(c=>c.value===r.concentration);
+  const rows=r.ingredients.filter(i=>i.name).map((ing,ix)=>{const sc=Math.round(ing.drops*ra*10)/10;const nt=NOTE_TYPES[ing.noteType];return el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderBottom:"1px solid var(--border)",background:ix%2===0?"transparent":"var(--bg)"}},el("div",null,el("span",{style:{color:nt.color,marginRight:"6px",fontSize:"10px"}},nt.icon),el("span",{style:{fontSize:"13px"}},ing.name),el("span",{style:{fontSize:"11px",color:"var(--cream-f)",marginLeft:"8px"}},ing.category)),el("div",{style:{textAlign:"right"}},el("span",{style:{fontFamily:"var(--font)",fontSize:"18px",color:"var(--gold-b)"}},sc),el("span",{style:{fontSize:"11px",color:"var(--cream-d)",marginLeft:"4px"}},"滴")));});
+  return el("div",{className:"calc-overlay",onClick:e=>{if(e.target===e.currentTarget){S.showCalc=false;render();}}},el("div",{className:"calc-sheet"},el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"20px"}},el("h3",{style:{fontFamily:"var(--font)",fontSize:"20px",fontWeight:"400",color:"var(--gold-b)"}},"滴下数 計算"),el("button",{className:"btn",style:{padding:"4px 12px",fontSize:"18px",lineHeight:"1"},onClick:()=>{S.showCalc=false;render();}},"×")),el("div",{className:"card",style:{background:"var(--bg)"}},el("div",{className:"label"},"基材量 (ml)"),el("div",{style:{display:"flex",alignItems:"center",gap:"12px",marginTop:"6px"}},el("input",{type:"number",id:"ct",className:"input",value:r.baseMl,min:"0.5",step:"0.5",style:{width:"100px",fontSize:"20px",textAlign:"center",fontFamily:"var(--font)",fontWeight:"600",color:"var(--gold-b)"},onInput:()=>render()}),el("span",{style:{fontSize:"13px",color:"var(--cream-d)"}},"ベース "+bm+"ml → ×"+ra.toFixed(2))),ct?el("div",{style:{marginTop:"8px",fontSize:"12px",color:"var(--cream-f)"}},ct.label+" ("+ct.range+") — 香料量目安: "+(tm*ct.ratio).toFixed(1)+"ml ("+Math.round(tm*ct.ratio*DROPS_PER_ML)+"滴)"):null),el("div",{style:{marginTop:"8px"}},...rows),el("div",{style:{display:"flex",justifyContent:"space-between",padding:"14px 12px",borderTop:"2px solid var(--gold)",marginTop:"4px"}},el("span",{style:{fontWeight:"600",fontSize:"14px"}},"合計"),el("div",null,el("span",{style:{fontFamily:"var(--font)",fontSize:"22px",color:"var(--gold-b)"}},tt),el("span",{style:{fontSize:"12px",color:"var(--cream-d)",marginLeft:"4px"}},"滴"),el("span",{style:{fontSize:"12px",color:"var(--cream-f)",marginLeft:"8px"}},"≈ "+(tt/DROPS_PER_ML).toFixed(1)+"ml")))));}
+
+// ─── IMPORT ───
+const NOTE_ALIASES={"トップ":"top","top":"top","t":"top","ヘッド":"top","head":"top","ミドル":"middle","middle":"middle","m":"middle","ハート":"middle","heart":"middle","ベース":"base","base":"base","b":"base","ラスト":"base","last":"base"};
+const HEADER_PATS=["素材","名前","name","香料","material","ingredient","原料"];
+function parseImport(text){if(!text.trim())return{items:[],error:""};const lines=text.trim().split(/\r?\n/).filter(l=>l.trim());if(!lines.length)return{items:[],error:""};const dl=lines[0].includes("\t")?"\t":",";let rows=lines.map(l=>l.split(dl).map(c=>c.trim().replace(/^["']|["']$/g,"")));const fr=rows[0].map(c=>c.toLowerCase());const hh=fr.some(c=>HEADER_PATS.some(p=>c.includes(p)));let cm={name:0,drops:1,note:2,category:3};if(hh){cm={name:-1,drops:-1,note:-1,category:-1};fr.forEach((h,i)=>{if(HEADER_PATS.some(p=>h.includes(p)))cm.name=i;else if(h.includes("滴")||h.includes("drop")||h.includes("数"))cm.drops=i;else if(h.includes("ノート")||h.includes("note"))cm.note=i;else if(h.includes("カテゴリ")||h.includes("category")||h.includes("分類"))cm.category=i;});if(cm.name===-1)cm.name=0;if(cm.drops===-1)cm.drops=Math.min(1,fr.length-1);rows=rows.slice(1);}const items=[],errs=[];rows.forEach((cols,ix)=>{if(cols.every(c=>!c))return;const name=cols[cm.name]||"";if(!name){errs.push((ix+1)+"行目: 素材名が空です");return;}let drops=parseInt(cols[cm.drops]);if(isNaN(drops)||drops<1)drops=1;const nr=(cols[cm.note]||"").toLowerCase().trim();const cr=(cols[cm.category]||"").trim();const am=lookupMaterial(name);const noteType=nr?(NOTE_ALIASES[nr]||(am?am.note:"top")):(am?am.note:"top");const category=cr&&CATEGORIES.includes(cr)?cr:(am?am.cat:"その他");items.push({id:uid(),name,drops,noteType,category});});return{items,error:errs.join("\n")};}
+
+function renderImport(){if(!S.showImport||!S.editData)return null;const pv=S.importPreview;const sample="素材名\t滴数\nベルガモット\t5\nローズAbs.\t8\nサンダルウッド\t4";
+  const pvRows=pv.map((it,ix)=>{const nt=NOTE_TYPES[it.noteType];return el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 12px",borderBottom:"1px solid var(--border)",background:ix%2===0?"transparent":"var(--bg)"}},el("div",{style:{display:"flex",alignItems:"center",gap:"6px"}},el("span",{style:{color:nt.color,fontSize:"10px"}},nt.icon),el("span",{style:{fontSize:"13px"}},it.name),el("span",{style:{fontSize:"11px",color:"var(--cream-f)",marginLeft:"4px"}},it.category)),el("span",{style:{fontFamily:"var(--font)",fontSize:"15px",color:"var(--gold-b)"}},it.drops+"滴"));});
+  const fi=el("input",{type:"file",style:{display:"none"},onChange:e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{S.importText=ev.target.result;const{items,error}=parseImport(S.importText);S.importPreview=items;S.importError=error;render();};r.readAsText(f);}});fi.setAttribute("accept",".csv,.tsv,.txt");
+  return el("div",{className:"calc-overlay",onClick:e=>{if(e.target===e.currentTarget){S.showImport=false;render();}}},el("div",{className:"calc-sheet"},
+    el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"16px"}},el("h3",{style:{fontFamily:"var(--font)",fontSize:"20px",fontWeight:"400",color:"var(--gold-b)"}},"一括インポート"),el("button",{className:"btn",style:{padding:"4px 12px",fontSize:"18px",lineHeight:"1"},onClick:()=>{S.showImport=false;render();}},"×")),
+    el("div",{style:{fontSize:"12px",color:"var(--cream-d)",marginBottom:"12px",lineHeight:"1.6"}},"スプレッドシートからコピペ、またはCSV/TSVファイルを読み込めます。",el("br"),"素材名だけでもノート・カテゴリは自動判定されます。"),
+    el("div",{style:{display:"flex",gap:"8px",marginBottom:"12px"}},el("button",{className:"btn",style:{fontSize:"12px",padding:"4px 10px"},onClick:()=>{S.importText=sample;const{items,error}=parseImport(sample);S.importPreview=items;S.importError=error;render();}},"サンプル"),el("button",{className:"btn",style:{fontSize:"12px",padding:"4px 10px"},onClick:()=>fi.click()},"📁 ファイル"),fi),
+    el("textarea",{className:"input",rows:"6",value:S.importText,placeholder:"ここに貼り付け…\n\n例:\nベルガモット\t5\nローズAbs.\t8",style:{resize:"vertical",lineHeight:"1.5",fontSize:"13px",fontFamily:"monospace"},onInput:e=>{S.importText=e.target.value;const{items,error}=parseImport(e.target.value);S.importPreview=items;S.importError=error;render();}}),
+    S.importError?el("div",{style:{fontSize:"12px",color:"var(--danger)",marginTop:"8px",whiteSpace:"pre-wrap"}},S.importError):null,
+    pv.length>0?el("div",{style:{marginTop:"12px"}},el("div",{className:"label",style:{marginBottom:"6px"}},"プレビュー ("+pv.length+"件)"),el("div",{style:{border:"1px solid var(--border)",borderRadius:"4px",overflow:"hidden",maxHeight:"200px",overflowY:"auto"}},...pvRows)):null,
+    el("div",{style:{display:"flex",gap:"8px",marginTop:"16px"}},
+      pv.length>0?el("button",{className:"btn-gold",style:{flex:"1"},onClick:()=>{const ex=S.editData.ingredients.filter(i=>i.name.trim());S.editData.ingredients=[...ex,...pv];if(!S.editData.ingredients.length)S.editData.ingredients=[newIng()];S.showImport=false;S.importText="";S.importPreview=[];S.importError="";render();}},"追加"):null,
+      pv.length>0?el("button",{className:"btn",style:{flex:"1"},onClick:()=>{S.editData.ingredients=[...pv];if(!S.editData.ingredients.length)S.editData.ingredients=[newIng()];S.showImport=false;S.importText="";S.importPreview=[];S.importError="";render();}},"置換"):null)));
+}
+
+// ─── Actions ───
+function openNew(){const n=newRecipe();if(S.activeFolder!=="__all__")n.project=S.activeFolder;S.editData=n;S.curId=n.id;S.view="edit";S.tagInput="";render();}
+function saveEdit(){const d=S.editData;if(!d||!d.name.trim())return;d.updatedAt=new Date().toISOString();const i=S.recipes.findIndex(r=>r.id===d.id);if(i>=0)S.recipes[i]=d;else S.recipes.unshift(d);persist();S.curId=d.id;S.view="detail";render();}
+function delR(id){if(!confirm("このレシピを削除しますか？"))return;S.recipes=S.recipes.filter(r=>r.id!==id);persist();S.view="list";S.curId=null;render();}
+function dupR(r){const d=JSON.parse(JSON.stringify(r));d.id=uid();d.name+=" (複製)";d.createdAt=d.updatedAt=new Date().toISOString();d.maturationStart=null;d.sortOrder=Date.now();d.ingredients.forEach(i=>i.id=uid());S.recipes.unshift(d);persist();S.editData=d;S.curId=d.id;S.view="edit";S.tagInput="";render();}
+function addTag(){const t=S.tagInput.trim();if(t&&S.editData&&!S.editData.tags.includes(t))S.editData.tags.push(t);S.tagInput="";}
+function pExp(t){const ta=document.createElement("textarea");ta.value=t;ta.style.cssText="position:fixed;top:0;left:0;opacity:0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");alert("コピーしました");}catch{prompt("コピー:",t);}document.body.removeChild(ta);}
+
+// ─── Render ───
+function render(){const root=document.getElementById("app");
+  const hdr=el("div",{className:"header"},el("h1",{onClick:()=>{S.view="list";S.search="";render();}},"⚗ Fragrance Lab"),el("button",{className:"btn-gold",style:{padding:"6px 14px"},onClick:openNew},"+ 新規"));
+  let c;if(S.view==="list")c=renderList();else if(S.view==="detail")c=renderDetail();else if(S.view==="edit")c=renderEdit();
+  root.innerHTML="";root.appendChild(hdr);if(c)root.appendChild(c);
+  if(S.showCalc){const x=renderCalc();if(x)root.appendChild(x);}
+  if(S.showImport){const x=renderImport();if(x)root.appendChild(x);}
+}
+render();
+</script>
+<script>
+const manifest={name:"Fragrance Lab",short_name:"Fragrance Lab",description:"調香レシピ管理ツール",start_url:".",display:"standalone",background_color:"#0D0B09",theme_color:"#0D0B09",icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230D0B09'/><text x='256' y='340' font-size='280' text-anchor='middle'>⚗</text></svg>",sizes:"512x512",type:"image/svg+xml"}]};
+const mBlob=new Blob([JSON.stringify(manifest)],{type:'application/json'});const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(mBlob);document.head.appendChild(link);
+</script>
+</body>
+</html>
